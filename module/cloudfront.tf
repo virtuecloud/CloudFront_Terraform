@@ -4,20 +4,21 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
     aws_s3_bucket.s3_bucket
   ]
 
+
   origin {
-    domain_name = aws_s3_bucket.s3_bucket.bucket_regional_domain_name
+    domain_name = var.bucket_name
     origin_id   = "s3-cloudfront"
 
-    s3_origin_config {
+    /* s3_origin_config {
       origin_access_identity = aws_cloudfront_origin_access_identity.origin_access_identity.cloudfront_access_identity_path
-    }
+    } */
   }
 
   enabled             = true
   is_ipv6_enabled     = true
   default_root_object = "index.html"
-
-  aliases = [var.domain_name]
+/* 
+  aliases = [var.domain_name] */
 
   default_cache_behavior {
     allowed_methods = [
@@ -42,7 +43,6 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
 
     viewer_protocol_policy = "redirect-to-https"
 
-    # https://stackoverflow.com/questions/67845341/cloudfront-s3-etag-possible-for-cloudfront-to-send-updated-s3-object-before-t
     min_ttl     = var.cloudfront_min_ttl
     default_ttl = var.cloudfront_default_ttl
     max_ttl     = var.cloudfront_max_ttl
@@ -56,15 +56,11 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
       locations = []
     }
   }
-   /* viewer_certificate {
-    # for_each = local.default_certs
-    
-      
-  } */
+  
 
     viewer_certificate {
     
-      acm_certificate_arn      = var.cert_arn     #data.aws_acm_certificate.acm_cert.arn
+      /* acm_certificate_arn      = var.cert_arn     #data.aws_acm_certificate.acm_cert.arn */
       ssl_support_method       = "sni-only"
       minimum_protocol_version = "TLSv1"
       cloudfront_default_certificate = true
@@ -89,5 +85,6 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
 }
 
 resource "aws_cloudfront_origin_access_identity" "origin_access_identity" {
-  comment = "access-identity-${var.domain_name}.s3.amazonaws.com"
+  count = var.bucketcreation ? 1 : 0
+  comment = "access-identity-${var.bucket_name}.s3.amazonaws.com"
 }
