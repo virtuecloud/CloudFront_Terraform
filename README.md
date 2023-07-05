@@ -36,7 +36,7 @@ Usage
 
 ```hcl
 module "cloudfront_with_s3" {
-  source = "./module"
+  source = "git::https://github.com/virtuecloud/CloudFront_Terraform.git//module"
   bucket_name = var.bucket_name
   bucketcreation = var.bucketcreation
   cloudfront_min_ttl = var.cloudfront_min_ttl
