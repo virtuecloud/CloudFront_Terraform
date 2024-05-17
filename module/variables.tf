@@ -1,7 +1,5 @@
-/* variable "domain_name" {
-  description = "domain name (or application name if no domain name available)"
-} */
-variable "bucket_name"{
+
+variable "bucket_name" {
   description = "Name of the bucket"
 }
 /* 
@@ -48,9 +46,6 @@ variable "cloudfront_default_ttl" {
 variable "cloudfront_max_ttl" {
   description = "The maximum TTL for the cloudfront cache"
 }
-variable "bucketcreation" {
-  type = string 
- }
 
 variable "cloudfront_geo_restriction_restriction_type" {
   description = "The method that you want to use to restrict distribution of your content by country: none, whitelist, or blacklist."
@@ -71,5 +66,5 @@ variable "cloudfront_geo_restriction_restriction_type" {
 
 # }
 # variable "route_name" {
-  
+
 # }

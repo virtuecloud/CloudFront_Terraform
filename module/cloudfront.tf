@@ -6,18 +6,18 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
 
 
   origin {
-    domain_name = var.bucket_name
-    origin_id   = "s3-cloudfront"
+    domain_name = aws_s3_bucket.s3_bucket.bucket_regional_domain_name
+    origin_id   = aws_s3_bucket.s3_bucket.bucket_regional_domain_name
 
-    /* s3_origin_config {
+    s3_origin_config {
       origin_access_identity = aws_cloudfront_origin_access_identity.origin_access_identity.cloudfront_access_identity_path
-    } */
+    }
   }
 
   enabled             = true
   is_ipv6_enabled     = true
   default_root_object = "index.html"
-/* 
+  /* 
   aliases = [var.domain_name] */
 
   default_cache_behavior {
@@ -31,7 +31,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
       "HEAD",
     ]
 
-    target_origin_id = "s3-cloudfront"
+    target_origin_id = aws_s3_bucket.s3_bucket.bucket_regional_domain_name
 
     forwarded_values {
       query_string = false
@@ -53,19 +53,19 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   restrictions {
     geo_restriction {
       restriction_type = var.cloudfront_geo_restriction_restriction_type
-      locations = []
+      locations        = []
     }
   }
-  
 
-    viewer_certificate {
-    
-      /* acm_certificate_arn      = var.cert_arn     #data.aws_acm_certificate.acm_cert.arn */
-      ssl_support_method       = "sni-only"
-      minimum_protocol_version = "TLSv1"
-      cloudfront_default_certificate = true
-    
-   }
+
+  viewer_certificate {
+
+    /* acm_certificate_arn      = var.cert_arn     #data.aws_acm_certificate.acm_cert.arn */
+    ssl_support_method             = "sni-only"
+    minimum_protocol_version       = "TLSv1"
+    cloudfront_default_certificate = true
+
+  }
 
   custom_error_response {
     error_code            = 403
@@ -85,6 +85,5 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
 }
 
 resource "aws_cloudfront_origin_access_identity" "origin_access_identity" {
-  count = var.bucketcreation ? 1 : 0
   comment = "access-identity-${var.bucket_name}.s3.amazonaws.com"
 }
